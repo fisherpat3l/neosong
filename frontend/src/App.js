@@ -338,10 +338,38 @@ const App = () => {
             </div>
           )}
 
-          {/* Effects Control Section */}
+          {/* Audio Effects & Controls - Always visible after upload */}
           {fileInfo && (
             <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 mb-8 border border-white/20">
-              <h2 className="text-2xl font-bold text-white mb-6">Audio Effects</h2>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-white">🎛️ Audio Effects & Modifications</h2>
+                <div className="flex items-center space-x-4">
+                  <button
+                    onClick={() => setEffects({
+                      volume: 1.0,
+                      pitch_shift: 0,
+                      tempo: 1.0,
+                      reverb: false,
+                      echo: false,
+                      bass_boost: 0,
+                      treble_boost: 0,
+                      noise_reduction: false,
+                      compression: false,
+                      stereo_wide: false,
+                      background_music: 'none',
+                      background_volume: 0.3,
+                      fade_in: 0,
+                      fade_out: 0
+                    })}
+                    className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                  >
+                    🔄 Reset All
+                  </button>
+                  <div className="text-white">
+                    <span className="text-sm">Original: {fileInfo.duration?.toFixed(1)}s</span>
+                  </div>
+                </div>
+              </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* Volume Control */}
