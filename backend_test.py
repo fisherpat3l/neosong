@@ -296,3 +296,6 @@ class AudioEnhancementAPITest(unittest.TestCase):
         data = response.json()
         self.assertTrue(data["success"])
         print("✅ Ambient preset processing working correctly")
+
+if __name__ == "__main__":
+    unittest.main(verbosity=2)
