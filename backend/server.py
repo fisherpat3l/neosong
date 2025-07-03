@@ -189,6 +189,24 @@ def process_audio_file(
         # Normalize audio data
         audio_data = audio_data / np.max(np.abs(audio_data))
         
+        # Apply tempo change first (affects timing)
+        if effects.get('tempo', 1.0) != 1.0:
+            audio_data = apply_tempo_change(audio_data, sample_rate, effects['tempo'])
+        
+        # Apply equalization
+        if effects.get('bass_boost', 0) != 0 or effects.get('treble_boost', 0) != 0:
+            audio_data = apply_eq(audio_data, sample_rate, 
+                                effects.get('bass_boost', 0), 
+                                effects.get('treble_boost', 0))
+        
+        # Apply noise reduction
+        if effects.get('noise_reduction', False):
+            audio_data = apply_noise_reduction(audio_data, sample_rate)
+        
+        # Apply compression
+        if effects.get('compression', False):
+            audio_data = apply_compression(audio_data)
+        
         # Apply effects
         if effects.get('reverb', False):
             audio_data = add_reverb(audio_data, sample_rate)
@@ -199,18 +217,41 @@ def process_audio_file(
         if effects.get('pitch_shift', 0) != 0:
             audio_data = adjust_pitch(audio_data, sample_rate, effects['pitch_shift'])
         
+        # Apply fade effects
+        if effects.get('fade_in', 0) > 0 or effects.get('fade_out', 0) > 0:
+            audio_data = apply_fade(audio_data, sample_rate, 
+                                  effects.get('fade_in', 0), 
+                                  effects.get('fade_out', 0))
+        
         # Apply volume adjustment
         volume_factor = effects.get('volume', 1.0)
         audio_data = audio_data * volume_factor
         
+        # Handle stereo widening
+        channels = 1
+        if effects.get('stereo_wide', False):
+            channels = 2
+            audio_data = apply_stereo_widening(audio_data, channels)
+        
         # Convert back to AudioSegment
-        audio_data = np.int16(audio_data * 32767)
-        processed_audio = AudioSegment(
-            audio_data.tobytes(),
-            frame_rate=sample_rate,
-            sample_width=2,
-            channels=1
-        )
+        if channels == 2:
+            # Stereo processing
+            audio_data = np.int16(audio_data * 32767)
+            processed_audio = AudioSegment(
+                audio_data.tobytes(),
+                frame_rate=sample_rate,
+                sample_width=2,
+                channels=2
+            )
+        else:
+            # Mono processing
+            audio_data = np.int16(audio_data * 32767)
+            processed_audio = AudioSegment(
+                audio_data.tobytes(),
+                frame_rate=sample_rate,
+                sample_width=2,
+                channels=1
+            )
         
         # Add background music if specified
         if background_music and background_music != 'none':
