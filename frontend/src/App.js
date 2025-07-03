@@ -628,31 +628,83 @@ const App = () => {
                 </div>
               </div>
 
-              {/* Process Button */}
+              {/* Process Button - More prominent */}
               <div className="mt-8 text-center">
                 <button
                   onClick={processAudio}
                   disabled={isProcessing}
-                  className="px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105"
+                  className="px-12 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-lg font-semibold rounded-xl hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105 shadow-lg"
                 >
-                  {isProcessing ? 'Processing...' : '🎵 Enhance Audio'}
+                  {isProcessing ? (
+                    <span className="flex items-center space-x-2">
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                      <span>Processing Audio...</span>
+                    </span>
+                  ) : (
+                    <span className="flex items-center space-x-2">
+                      <span>🎵</span>
+                      <span>Apply Effects & Enhance Audio</span>
+                    </span>
+                  )}
                 </button>
+                <p className="text-blue-200 text-sm mt-2">
+                  Click to apply all selected effects and modifications
+                </p>
               </div>
             </div>
           )}
 
-          {/* Download Section */}
+          {/* Download Section - Always visible after processing */}
           {processedFileId && (
-            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20">
-              <h2 className="text-2xl font-bold text-white mb-6">Download Enhanced Audio</h2>
+            <div className="bg-gradient-to-r from-green-500/20 to-blue-500/20 backdrop-blur-lg rounded-2xl p-8 border border-green-400/30">
               <div className="text-center">
-                <p className="text-blue-200 mb-4">Your enhanced audio is ready!</p>
-                <button
-                  onClick={downloadAudio}
-                  className="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors transform hover:scale-105"
-                >
-                  📥 Download Enhanced Audio
-                </button>
+                <h2 className="text-2xl font-bold text-white mb-4">✅ Audio Enhancement Complete!</h2>
+                <p className="text-green-200 mb-6">Your enhanced audio is ready for download</p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                  <button
+                    onClick={downloadAudio}
+                    className="px-8 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all duration-200 transform hover:scale-105 shadow-lg"
+                  >
+                    <span className="flex items-center space-x-2">
+                      <span>📥</span>
+                      <span>Download Enhanced Audio</span>
+                    </span>
+                  </button>
+                  <button
+                    onClick={() => switchAudioMode('processed')}
+                    className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    <span className="flex items-center space-x-2">
+                      <span>🎵</span>
+                      <span>Play Enhanced Version</span>
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Audio Analysis Section */}
+          {fileInfo && (
+            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20">
+              <h2 className="text-2xl font-bold text-white mb-6">📊 Audio Information</h2>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-blue-400">{fileInfo.duration?.toFixed(1)}s</div>
+                  <div className="text-blue-200 text-sm">Duration</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-green-400">{fileInfo.format?.toUpperCase()}</div>
+                  <div className="text-blue-200 text-sm">Format</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-purple-400">{(fileInfo.size / 1024 / 1024).toFixed(1)}MB</div>
+                  <div className="text-blue-200 text-sm">File Size</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-orange-400">{processedFileId ? 'Enhanced' : 'Original'}</div>
+                  <div className="text-blue-200 text-sm">Status</div>
+                </div>
               </div>
             </div>
           )}
