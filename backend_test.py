@@ -69,8 +69,8 @@ class AudioEnhancementAPITest(unittest.TestCase):
         self.file_id = data["file_id"]
         print(f"✅ Upload endpoint working, file_id: {self.file_id}")
 
-    def test_04_process_audio(self):
-        """Test processing an audio file with effects"""
+    def test_04_process_audio_basic(self):
+        """Test processing an audio file with basic effects"""
         if not self.file_id:
             self.test_03_upload_audio()
         
@@ -96,7 +96,45 @@ class AudioEnhancementAPITest(unittest.TestCase):
         
         # Save processed_file_id for later tests
         self.processed_file_id = data["processed_file_id"]
-        print(f"✅ Process audio endpoint working, processed_file_id: {self.processed_file_id}")
+        print(f"✅ Process audio with basic effects working, processed_file_id: {self.processed_file_id}")
+        
+    def test_04a_process_audio_advanced(self):
+        """Test processing an audio file with advanced effects"""
+        if not self.file_id:
+            self.test_03_upload_audio()
+        
+        # Test with all the new advanced effects
+        effects = {
+            "volume": 1.5,            # 0-200%
+            "pitch_shift": 5,         # -12 to +12 semitones
+            "tempo": 1.5,             # 50% to 200% speed
+            "bass_boost": 10,         # -20 to +20 dB
+            "treble_boost": 5,        # -20 to +20 dB
+            "fade_in": 2,             # 0-10 seconds
+            "fade_out": 3,            # 0-10 seconds
+            "reverb": True,           # toggle
+            "echo": True,             # toggle
+            "noise_reduction": True,  # toggle
+            "compression": True,      # toggle
+            "stereo_wide": True,      # toggle
+            "background_music": "beat1",
+            "background_volume": 0.5
+        }
+        
+        data = {
+            'file_id': self.file_id,
+            'effects': json.dumps(effects)
+        }
+        
+        response = requests.post(f"{self.base_url}/api/process-audio", data=data)
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertTrue(data["success"])
+        self.assertIn("processed_file_id", data)
+        
+        # Save processed_file_id for later tests
+        self.processed_file_id = data["processed_file_id"]
+        print(f"✅ Process audio with advanced effects working, processed_file_id: {self.processed_file_id}")
 
     def test_05_preview_original(self):
         """Test previewing the original audio file"""
