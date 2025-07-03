@@ -197,5 +197,102 @@ class AudioEnhancementAPITest(unittest.TestCase):
         self.assertEqual(response.status_code, 404)
         print("✅ Download error handling working correctly")
 
-if __name__ == "__main__":
-    unittest.main(verbosity=2)
+    def test_09_preset_rock(self):
+        """Test the Rock preset"""
+        if not self.file_id:
+            self.test_03_upload_audio()
+        
+        # Rock preset settings
+        effects = {
+            "volume": 1.2,
+            "bass_boost": 8,
+            "treble_boost": 3,
+            "compression": True,
+            "background_music": "beat1"
+        }
+        
+        data = {
+            'file_id': self.file_id,
+            'effects': json.dumps(effects)
+        }
+        
+        response = requests.post(f"{self.base_url}/api/process-audio", data=data)
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertTrue(data["success"])
+        print("✅ Rock preset processing working correctly")
+        
+    def test_10_preset_hip_hop(self):
+        """Test the Hip Hop preset"""
+        if not self.file_id:
+            self.test_03_upload_audio()
+        
+        # Hip Hop preset settings
+        effects = {
+            "volume": 1.1,
+            "bass_boost": 12,
+            "treble_boost": -2,
+            "compression": True,
+            "background_music": "beat2"
+        }
+        
+        data = {
+            'file_id': self.file_id,
+            'effects': json.dumps(effects)
+        }
+        
+        response = requests.post(f"{self.base_url}/api/process-audio", data=data)
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertTrue(data["success"])
+        print("✅ Hip Hop preset processing working correctly")
+        
+    def test_11_preset_jazz(self):
+        """Test the Jazz preset"""
+        if not self.file_id:
+            self.test_03_upload_audio()
+        
+        # Jazz preset settings
+        effects = {
+            "volume": 1.0,
+            "bass_boost": 0,
+            "treble_boost": 5,
+            "reverb": True,
+            "background_music": "jazz"
+        }
+        
+        data = {
+            'file_id': self.file_id,
+            'effects': json.dumps(effects)
+        }
+        
+        response = requests.post(f"{self.base_url}/api/process-audio", data=data)
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertTrue(data["success"])
+        print("✅ Jazz preset processing working correctly")
+        
+    def test_12_preset_ambient(self):
+        """Test the Ambient preset"""
+        if not self.file_id:
+            self.test_03_upload_audio()
+        
+        # Ambient preset settings
+        effects = {
+            "volume": 0.9,
+            "bass_boost": -3,
+            "treble_boost": 2,
+            "reverb": True,
+            "background_music": "ambient"
+        }
+        
+        data = {
+            'file_id': self.file_id,
+            'effects': json.dumps(effects)
+        }
+        
+        response = requests.post(f"{self.base_url}/api/process-audio", data=data)
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertTrue(data["success"])
+        print("✅ Ambient preset processing working correctly")
