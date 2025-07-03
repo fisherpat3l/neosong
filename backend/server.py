@@ -44,6 +44,93 @@ for dir_path in [UPLOAD_DIR, PROCESSED_DIR, BACKGROUND_DIR]:
     dir_path.mkdir(parents=True, exist_ok=True)
 
 # Audio processing functions
+def apply_eq(audio_data, sample_rate, bass_boost=0, treble_boost=0):
+    """Apply equalization (bass and treble boost)"""
+    if bass_boost == 0 and treble_boost == 0:
+        return audio_data
+    
+    # Create frequency domain representation
+    fft = np.fft.fft(audio_data)
+    freqs = np.fft.fftfreq(len(audio_data), 1/sample_rate)
+    
+    # Apply bass boost (frequencies below 300 Hz)
+    bass_mask = np.abs(freqs) < 300
+    if bass_boost != 0:
+        fft[bass_mask] *= 10 ** (bass_boost / 20)
+    
+    # Apply treble boost (frequencies above 3000 Hz)
+    treble_mask = np.abs(freqs) > 3000
+    if treble_boost != 0:
+        fft[treble_mask] *= 10 ** (treble_boost / 20)
+    
+    # Convert back to time domain
+    return np.real(np.fft.ifft(fft))
+
+def apply_compression(audio_data, threshold=0.7, ratio=4.0):
+    """Apply dynamic range compression"""
+    # Simple compression algorithm
+    compressed = np.copy(audio_data)
+    mask = np.abs(compressed) > threshold
+    
+    # Reduce amplitude above threshold
+    compressed[mask] = np.sign(compressed[mask]) * (
+        threshold + (np.abs(compressed[mask]) - threshold) / ratio
+    )
+    
+    return compressed
+
+def apply_noise_reduction(audio_data, sample_rate):
+    """Apply basic noise reduction"""
+    # Simple spectral subtraction
+    fft = np.fft.fft(audio_data)
+    magnitude = np.abs(fft)
+    phase = np.angle(fft)
+    
+    # Estimate noise floor (lowest 10% of magnitudes)
+    noise_floor = np.percentile(magnitude, 10)
+    
+    # Subtract noise floor
+    cleaned_magnitude = np.maximum(magnitude - noise_floor * 0.5, magnitude * 0.1)
+    
+    # Reconstruct signal
+    cleaned_fft = cleaned_magnitude * np.exp(1j * phase)
+    return np.real(np.fft.ifft(cleaned_fft))
+
+def apply_stereo_widening(audio_data, channels=2):
+    """Apply stereo widening effect"""
+    if channels == 1:
+        # Convert mono to pseudo-stereo
+        return np.column_stack([audio_data, audio_data * 0.9])
+    return audio_data
+
+def apply_tempo_change(audio_data, sample_rate, tempo_factor=1.0):
+    """Change tempo without affecting pitch"""
+    if tempo_factor == 1.0:
+        return audio_data
+    
+    # Use phase vocoder for tempo change
+    return librosa.effects.time_stretch(audio_data, rate=tempo_factor)
+
+def apply_fade(audio_data, sample_rate, fade_in=0, fade_out=0):
+    """Apply fade in and fade out effects"""
+    result = np.copy(audio_data)
+    
+    # Fade in
+    if fade_in > 0:
+        fade_in_samples = int(fade_in * sample_rate)
+        if fade_in_samples > 0 and fade_in_samples < len(result):
+            fade_curve = np.linspace(0, 1, fade_in_samples)
+            result[:fade_in_samples] *= fade_curve
+    
+    # Fade out
+    if fade_out > 0:
+        fade_out_samples = int(fade_out * sample_rate)
+        if fade_out_samples > 0 and fade_out_samples < len(result):
+            fade_curve = np.linspace(1, 0, fade_out_samples)
+            result[-fade_out_samples:] *= fade_curve
+    
+    return result
+
 def add_reverb(audio_data, sample_rate, decay=0.5, delay=0.1):
     """Add reverb effect to audio"""
     delay_samples = int(delay * sample_rate)
