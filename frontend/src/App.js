@@ -343,7 +343,7 @@ const App = () => {
             <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 mb-8 border border-white/20">
               <h2 className="text-2xl font-bold text-white mb-6">Audio Effects</h2>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* Volume Control */}
                 <div className="space-y-2">
                   <label className="text-white font-medium">Volume</label>
@@ -372,6 +372,81 @@ const App = () => {
                     className="w-full"
                   />
                   <div className="text-blue-200 text-sm">{effects.pitch_shift} semitones</div>
+                </div>
+
+                {/* Tempo Control */}
+                <div className="space-y-2">
+                  <label className="text-white font-medium">Tempo</label>
+                  <input
+                    type="range"
+                    min="0.5"
+                    max="2.0"
+                    step="0.1"
+                    value={effects.tempo}
+                    onChange={(e) => setEffects({ ...effects, tempo: parseFloat(e.target.value) })}
+                    className="w-full"
+                  />
+                  <div className="text-blue-200 text-sm">{Math.round(effects.tempo * 100)}%</div>
+                </div>
+
+                {/* Bass Boost */}
+                <div className="space-y-2">
+                  <label className="text-white font-medium">Bass Boost</label>
+                  <input
+                    type="range"
+                    min="-20"
+                    max="20"
+                    step="1"
+                    value={effects.bass_boost}
+                    onChange={(e) => setEffects({ ...effects, bass_boost: parseInt(e.target.value) })}
+                    className="w-full"
+                  />
+                  <div className="text-blue-200 text-sm">{effects.bass_boost > 0 ? '+' : ''}{effects.bass_boost} dB</div>
+                </div>
+
+                {/* Treble Boost */}
+                <div className="space-y-2">
+                  <label className="text-white font-medium">Treble Boost</label>
+                  <input
+                    type="range"
+                    min="-20"
+                    max="20"
+                    step="1"
+                    value={effects.treble_boost}
+                    onChange={(e) => setEffects({ ...effects, treble_boost: parseInt(e.target.value) })}
+                    className="w-full"
+                  />
+                  <div className="text-blue-200 text-sm">{effects.treble_boost > 0 ? '+' : ''}{effects.treble_boost} dB</div>
+                </div>
+
+                {/* Fade In */}
+                <div className="space-y-2">
+                  <label className="text-white font-medium">Fade In</label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="10"
+                    step="0.5"
+                    value={effects.fade_in}
+                    onChange={(e) => setEffects({ ...effects, fade_in: parseFloat(e.target.value) })}
+                    className="w-full"
+                  />
+                  <div className="text-blue-200 text-sm">{effects.fade_in}s</div>
+                </div>
+
+                {/* Fade Out */}
+                <div className="space-y-2">
+                  <label className="text-white font-medium">Fade Out</label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="10"
+                    step="0.5"
+                    value={effects.fade_out}
+                    onChange={(e) => setEffects({ ...effects, fade_out: parseFloat(e.target.value) })}
+                    className="w-full"
+                  />
+                  <div className="text-blue-200 text-sm">{effects.fade_out}s</div>
                 </div>
 
                 {/* Background Music */}
@@ -406,30 +481,122 @@ const App = () => {
                     <div className="text-blue-200 text-sm">{Math.round(effects.background_volume * 100)}%</div>
                   </div>
                 )}
+              </div>
 
-                {/* Effect Toggles */}
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-3">
-                    <input
-                      type="checkbox"
-                      id="reverb"
-                      checked={effects.reverb}
-                      onChange={(e) => setEffects({ ...effects, reverb: e.target.checked })}
-                      className="w-4 h-4"
-                    />
-                    <label htmlFor="reverb" className="text-white">Add Reverb</label>
-                  </div>
-                  
-                  <div className="flex items-center space-x-3">
-                    <input
-                      type="checkbox"
-                      id="echo"
-                      checked={effects.echo}
-                      onChange={(e) => setEffects({ ...effects, echo: e.target.checked })}
-                      className="w-4 h-4"
-                    />
-                    <label htmlFor="echo" className="text-white">Add Echo</label>
-                  </div>
+              {/* Effect Toggles */}
+              <div className="mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="reverb"
+                    checked={effects.reverb}
+                    onChange={(e) => setEffects({ ...effects, reverb: e.target.checked })}
+                    className="w-4 h-4"
+                  />
+                  <label htmlFor="reverb" className="text-white">🎭 Reverb</label>
+                </div>
+                
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="echo"
+                    checked={effects.echo}
+                    onChange={(e) => setEffects({ ...effects, echo: e.target.checked })}
+                    className="w-4 h-4"
+                  />
+                  <label htmlFor="echo" className="text-white">🔊 Echo</label>
+                </div>
+
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="noise_reduction"
+                    checked={effects.noise_reduction}
+                    onChange={(e) => setEffects({ ...effects, noise_reduction: e.target.checked })}
+                    className="w-4 h-4"
+                  />
+                  <label htmlFor="noise_reduction" className="text-white">🔇 Noise Reduction</label>
+                </div>
+
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="compression"
+                    checked={effects.compression}
+                    onChange={(e) => setEffects({ ...effects, compression: e.target.checked })}
+                    className="w-4 h-4"
+                  />
+                  <label htmlFor="compression" className="text-white">🎚️ Compression</label>
+                </div>
+
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="stereo_wide"
+                    checked={effects.stereo_wide}
+                    onChange={(e) => setEffects({ ...effects, stereo_wide: e.target.checked })}
+                    className="w-4 h-4"
+                  />
+                  <label htmlFor="stereo_wide" className="text-white">🎵 Stereo Wide</label>
+                </div>
+              </div>
+
+              {/* Preset Buttons */}
+              <div className="mt-6">
+                <h3 className="text-lg font-semibold text-white mb-3">Quick Presets</h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <button
+                    onClick={() => setEffects({
+                      ...effects,
+                      volume: 1.2,
+                      bass_boost: 8,
+                      treble_boost: 3,
+                      compression: true,
+                      background_music: 'beat1'
+                    })}
+                    className="px-4 py-2 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-lg hover:from-red-600 hover:to-pink-600 transition-all"
+                  >
+                    🎸 Rock
+                  </button>
+                  <button
+                    onClick={() => setEffects({
+                      ...effects,
+                      volume: 1.1,
+                      bass_boost: 12,
+                      treble_boost: -2,
+                      compression: true,
+                      background_music: 'beat2'
+                    })}
+                    className="px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-500 text-white rounded-lg hover:from-yellow-600 hover:to-orange-600 transition-all"
+                  >
+                    🎤 Hip Hop
+                  </button>
+                  <button
+                    onClick={() => setEffects({
+                      ...effects,
+                      volume: 1.0,
+                      bass_boost: 0,
+                      treble_boost: 5,
+                      reverb: true,
+                      background_music: 'jazz'
+                    })}
+                    className="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg hover:from-blue-600 hover:to-purple-600 transition-all"
+                  >
+                    🎷 Jazz
+                  </button>
+                  <button
+                    onClick={() => setEffects({
+                      ...effects,
+                      volume: 0.9,
+                      bass_boost: -3,
+                      treble_boost: 2,
+                      reverb: true,
+                      background_music: 'ambient'
+                    })}
+                    className="px-4 py-2 bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-lg hover:from-green-600 hover:to-teal-600 transition-all"
+                  >
+                    🌙 Ambient
+                  </button>
                 </div>
               </div>
 
