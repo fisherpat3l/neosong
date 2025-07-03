@@ -21,10 +21,18 @@ const App = () => {
   const [effects, setEffects] = useState({
     volume: 1.0,
     pitch_shift: 0,
+    tempo: 1.0,
     reverb: false,
     echo: false,
+    bass_boost: 0,
+    treble_boost: 0,
+    noise_reduction: false,
+    compression: false,
+    stereo_wide: false,
     background_music: 'none',
-    background_volume: 0.3
+    background_volume: 0.3,
+    fade_in: 0,
+    fade_out: 0
   });
 
   const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
