@@ -149,7 +149,7 @@ class AudioEnhancementAPITest(unittest.TestCase):
     def test_06_preview_processed(self):
         """Test previewing the processed audio file"""
         if not self.processed_file_id:
-            self.test_04_process_audio()
+            self.test_04_process_audio_basic()
         
         response = requests.get(f"{self.base_url}/api/preview/{self.processed_file_id}")
         self.assertEqual(response.status_code, 200)
@@ -159,7 +159,7 @@ class AudioEnhancementAPITest(unittest.TestCase):
     def test_07_download_processed(self):
         """Test downloading the processed audio file"""
         if not self.processed_file_id:
-            self.test_04_process_audio()
+            self.test_04_process_audio_basic()
         
         response = requests.get(f"{self.base_url}/api/download/{self.processed_file_id}")
         self.assertEqual(response.status_code, 200)
